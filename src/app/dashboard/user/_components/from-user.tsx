@@ -7,7 +7,13 @@ import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { User } from "./columns";
 import api from "@/lib/axios";
@@ -72,8 +78,8 @@ export const UserForm = ({ user, onSuccess, open, setOpen }: UserFormProps) => {
     formData.append("email", data.email);
 
     if (data.password) {
-      formData.append("password", data.password)
-    };
+      formData.append("password", data.password);
+    }
 
     if (pictureFile) {
       formData.append("picture", pictureFile);
@@ -81,15 +87,13 @@ export const UserForm = ({ user, onSuccess, open, setOpen }: UserFormProps) => {
       formData.append("picture", user.picture);
     }
 
-    console.log("Final FormData:", Object.fromEntries(formData.entries()));
-
     try {
       if (user) {
-        await api.put(`/api/users/${user.id}`, formData, {
+        await api.put(`/users/${user.id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
-        await api.post("/api/users", formData, {
+        await api.post("/users", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
@@ -129,36 +133,60 @@ export const UserForm = ({ user, onSuccess, open, setOpen }: UserFormProps) => {
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
           {/* Nama */}
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">Name</Label>
+            <Label htmlFor="name" className="text-right">
+              Name
+            </Label>
             <div className="col-span-3">
               <Input id="name" {...register("name")} />
-              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Email */}
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">Email</Label>
+            <Label htmlFor="email" className="text-right">
+              Email
+            </Label>
             <div className="col-span-3">
               <Input id="email" type="email" {...register("email")} />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Password (hanya saat create user) */}
           {!user && (
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="password" className="text-right">Password</Label>
+              <Label htmlFor="password" className="text-right">
+                Password
+              </Label>
               <div className="col-span-3">
-                <Input id="password" type="password" {...register("password")} />
-                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
             </div>
           )}
 
           {/* Profile Picture */}
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="picture" className="text-right">Profile Picture</Label>
+            <Label htmlFor="picture" className="text-right">
+              Profile Picture
+            </Label>
 
             <div className="col-span-3 flex items-center gap-4">
               {/* Input File */}
@@ -170,7 +198,11 @@ export const UserForm = ({ user, onSuccess, open, setOpen }: UserFormProps) => {
                   onChange={handleFileChange}
                 />
                 <p className="text-gray-500 text-xs">Optional - Maksimal 2MB</p>
-                {errors.picture && <p className="text-red-500 text-sm">{errors.picture.message?.toString()}</p>}
+                {errors.picture && (
+                  <p className="text-red-500 text-sm">
+                    {errors.picture.message?.toString()}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -190,8 +222,17 @@ export const UserForm = ({ user, onSuccess, open, setOpen }: UserFormProps) => {
 
           {/* Footer */}
           <DialogFooter>
-            <Button className="cursor-pointer" type="button" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button className="cursor-pointer" type="submit">Save</Button>
+            <Button
+              className="cursor-pointer"
+              type="button"
+              variant="ghost"
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button className="cursor-pointer" type="submit">
+              Save
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
