@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ModeToggle } from "@/components/toogle-theme";
+import cookie from "js-cookie";
 
 interface LoginForm {
   email: string;
@@ -26,10 +27,18 @@ const LoginPage = () => {
     try {
       const response = await api.post("/auth/login", data);
 
-      localStorage.setItem("token", response.data.token);
+      const token = response.data.data.token;
+      console.log(token);
+      localStorage.setItem("token", token);
+      cookie.set("token", token, {
+        expires: new Date(Date.now() + 60 * 60 * 24 * 7 * 1000),
+        path: "/",
+      });
+
       toast.success("Login berhasil!");
-      router.push("/dashboard/user");
+      router.push("/dashboard");
     } catch (error) {
+      console.error(error);
       toast.error("Email atau password salah");
     } finally {
       setLoading(false);
@@ -49,20 +58,32 @@ const LoginPage = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <Label className="mb-3">Email</Label>
-              <Input type="email" {...register("email", { required: true })} placeholder="Enter your email" />
+              <Input
+                type="email"
+                {...register("email", { required: true })}
+                placeholder="Enter your email"
+              />
             </div>
             <div>
               <Label className="mb-3">Password</Label>
-              <Input type="password" {...register("password", { required: true })} placeholder="Enter your password" />
+              <Input
+                type="password"
+                {...register("password", { required: true })}
+                placeholder="Enter your password"
+              />
             </div>
-            <Button type="submit" className="cursor-pointer w-full mt-3" disabled={loading}>
+            <Button
+              type="submit"
+              className="cursor-pointer w-full mt-3"
+              disabled={loading}
+            >
               {loading ? "Loading..." : "Login"}
             </Button>
           </form>
         </CardContent>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default LoginPage
+export default LoginPage;
