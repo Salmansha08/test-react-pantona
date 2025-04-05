@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, columns } from "./_components/columns"
-import { DataTable } from "./_components/data-table"
-import api from "@/lib/axios"
+import { User, columns } from "./_components/columns";
+import { DataTable } from "./_components/data-table";
+import api from "@/lib/axios";
 import { UserForm } from "./_components/from-user";
 import { Button } from "@/components/ui/button";
 
@@ -14,8 +14,8 @@ const DashboardUserPage = () => {
 
   const fetchData = async () => {
     try {
-      const response = await api.get("/api/users");
-      setData(response.data);
+      const response = await api.get("/users");
+      setData(response.data.data || []);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
