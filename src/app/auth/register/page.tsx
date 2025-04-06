@@ -30,6 +30,7 @@ const RegisterPage = () => {
       toast.success("Registrasi berhasil! Silakan login.");
       router.push("/auth/login");
     } catch (error) {
+      console.error(error);
       toast.error("Registrasi gagal. Coba lagi.");
     } finally {
       setLoading(false);
@@ -49,21 +50,41 @@ const RegisterPage = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <Label className="mb-3">Name</Label>
-              <Input type="text" {...register("name", { required: true })} placeholder="Enter your name" />
+              <Input
+                type="text"
+                {...register("name", { required: true })}
+                placeholder="Enter your name"
+              />
             </div>
             <div>
               <Label className="mb-3">Email</Label>
-              <Input type="email" {...register("email", { required: true })} placeholder="Enter your email" />
+              <Input
+                type="email"
+                {...register("email", { required: true })}
+                placeholder="Enter your email"
+              />
             </div>
             <div>
               <Label className="mb-3">Password</Label>
-              <Input type="password" {...register("password", { required: true })} placeholder="Enter your password" />
+              <Input
+                type="password"
+                {...register("password", { required: true })}
+                placeholder="Enter your password"
+              />
             </div>
             <div>
               <Label className="mb-3">Confirm Password</Label>
-              <Input type="password" {...register("password_confirmation", { required: true })} placeholder="Confirm your password" />
+              <Input
+                type="password"
+                {...register("password_confirmation", { required: true })}
+                placeholder="Confirm your password"
+              />
             </div>
-            <Button type="submit" className="cursor-pointer w-full mt-3" disabled={loading}>
+            <Button
+              type="submit"
+              className="cursor-pointer w-full mt-3"
+              disabled={loading}
+            >
               {loading ? "Loading..." : "Register"}
             </Button>
           </form>

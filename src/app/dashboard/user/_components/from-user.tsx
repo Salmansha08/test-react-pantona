@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,11 +18,18 @@ import {
 import { Label } from "@/components/ui/label";
 import { User } from "./columns";
 import api from "@/lib/axios";
+import { getImageUrl } from "@/lib/image-url";
+import Image from "next/image";
 
 const userSchema = z.object({
   name: z.string().min(3, "Nama minimal 3 karakter"),
   email: z.string().email("Email tidak valid"),
-  password: z.string().min(6, "Password minimal 6 karakter").optional(),
+  password: z
+    .union([
+      z.string().min(6, "Password minimal 6 karakter"),
+      z.string().length(0),
+    ])
+    .optional(),
   picture: z
     .union([
       z.instanceof(File).refine((file) => file.size <= 2 * 1024 * 1024, {
@@ -47,7 +55,6 @@ export const UserForm = ({ user, onSuccess, open, setOpen }: UserFormProps) => {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
     reset,
     setValue,
   } = useForm<UserFormData>({
@@ -73,54 +80,89 @@ export const UserForm = ({ user, onSuccess, open, setOpen }: UserFormProps) => {
   };
 
   const onSubmit = async (data: UserFormData) => {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("email", data.email);
-
-    if (data.password) {
-      formData.append("password", data.password);
-    }
-
-    if (pictureFile) {
-      formData.append("picture", pictureFile);
-    } else if (!pictureFile && typeof user?.picture === "string") {
-      formData.append("picture", user.picture);
-    }
-
     try {
-      if (user) {
-        await api.put(`/users/${user.id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      } else {
-        await api.post("/users", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+
+      if (data.password && data.password.length > 0) {
+        formData.append("password", data.password);
       }
+
+      if (pictureFile) {
+        formData.append("picture", pictureFile);
+      }
+
+      if (user) {
+        formData.append("_method", "PUT");
+      }
+
+      const response = await api.post(
+        user ? `/users/${user.id}` : "/users",
+        formData,
+        {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.info(
+        user ? "Update response:" : "Create response:",
+        response.data
+      );
+      toast.success(
+        user ? "User updated successfully!" : "User created successfully!"
+      );
+
       setPictureFile(null);
       setPreview(null);
       setOpen(false);
-      if (onSuccess) onSuccess();
-    } catch (error) {
+
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        window.location.reload();
+      }
+    } catch (error: any) {
       console.error("Error saving user:", error);
+      console.error("Error details:", error.response?.data, error.request);
+      toast.error(
+        `Error saving user: ${
+          error.response?.data?.message ||
+          (error instanceof Error ? error.message : String(error))
+        }`
+      );
     }
   };
 
   useEffect(() => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
     if (user) {
       reset({
         name: user.name,
         email: user.email,
         password: "",
-        picture: user.picture ? `${baseUrl}/${user.picture}` : null,
+        picture: user.picture || null,
       });
 
       if (user.picture) {
-        setPreview(`${baseUrl}${user.picture}`);
+        const imagePreviewUrl = getImageUrl(user.picture);
+        setPreview(imagePreviewUrl);
       } else {
         setPreview(null);
       }
+    } else {
+      reset({
+        name: "",
+        email: "",
+        password: "",
+        picture: null,
+      });
+      setPictureFile(null);
+      setPreview(null);
     }
   }, [user, reset]);
 
@@ -211,10 +253,12 @@ export const UserForm = ({ user, onSuccess, open, setOpen }: UserFormProps) => {
           <div className="flex justify-center w-full">
             {preview && (
               <div className="w-[200px] h-[200px] border rounded-md overflow-hidden shadow-md">
-                <img
+                <Image
                   src={preview}
-                  alt="Profile Preview"
+                  alt={`${user?.name || "New user"} profile`}
                   className="w-full h-full object-cover"
+                  width={200}
+                  height={200}
                 />
               </div>
             )}

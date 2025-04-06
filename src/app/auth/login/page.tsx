@@ -28,7 +28,6 @@ const LoginPage = () => {
       const response = await api.post("/auth/login", data);
 
       const token = response.data.data.token;
-      console.log(token);
       localStorage.setItem("token", token);
       cookie.set("token", token, {
         expires: new Date(Date.now() + 60 * 60 * 24 * 7 * 1000),
