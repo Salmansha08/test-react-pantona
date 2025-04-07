@@ -9,8 +9,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { User, HomeIcon } from "lucide-react"
+} from "@/components/ui/sidebar";
+import { User, HomeIcon } from "lucide-react";
 
 const items = [
   {
@@ -23,7 +23,7 @@ const items = [
     url: "/dashboard/user",
     icon: User,
   },
-]
+];
 
 export function AppSidebar() {
   return (
@@ -48,7 +48,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter></SidebarFooter>
     </Sidebar>
-  )
+  );
 }

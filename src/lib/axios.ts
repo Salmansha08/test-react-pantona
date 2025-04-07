@@ -21,9 +21,21 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = cookie.get('token');
-    if (token && token !== 'undefined' && token !== 'null') {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (!config.headers.Authorization) {
+      const cookieToken = cookie.get('token');
+      if (cookieToken && cookieToken !== 'undefined' && cookieToken !== 'null') {
+        config.headers.Authorization = `Bearer ${cookieToken}`;
+        return config;
+      }
+
+      try {
+        const localToken = localStorage.getItem('token');
+        if (localToken && localToken !== 'undefined' && localToken !== 'null') {
+          config.headers.Authorization = `Bearer ${localToken}`;
+        }
+      } catch (error) {
+        console.error('Error accessing localStorage token:', error);
+      }
     }
     return config;
   },
@@ -45,31 +57,24 @@ api.interceptors.response.use(
   }
 );
 
-export async function validateToken(): Promise<{ isValid: boolean; user: User | null }> {
-  try {
-    const token = cookie.get('token');
-
-    if (!token || token === 'undefined' || token === 'null') {
-      return { isValid: false, user: null };
-    }
-
-    const response = await api.get('/api/auth/me');
-
-    if (response.status === 200 && response.data?.data) {
-      return {
-        isValid: true,
-        user: response.data.data
-      };
-    }
-
-    return { isValid: false, user: null };
-  } catch (error) {
-    console.error('Token validation error:', error);
-    localStorage.removeItem('token');
-    cookie.remove('token', { path: '/' });
-    return { isValid: false, user: null };
-  }
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
 }
+
+export const fetcher = async <T = any>(url: string): Promise<T> => {
+  try {
+    const response = await api.get<T>(url);
+    return response.data;
+  } catch (error: unknown) {
+    const apiError = error as ApiError;
+    console.error("An error occurred while fetching the data:", error);
+    throw new Error(apiError.response?.data?.message || "An error occurred");
+  }
+};
 
 export function logout() {
   localStorage.removeItem('token');
