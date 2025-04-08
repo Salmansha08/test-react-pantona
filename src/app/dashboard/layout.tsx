@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ModeToggle } from "@/components/toogle-theme";
+import { Breadcrumbs } from "@/components/breadcrumb";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [defaultOpen, setDefaultOpen] = useState(true);
@@ -21,6 +22,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <SidebarTrigger />
           <ModeToggle />
         </div>
+        <Breadcrumbs />
         {children}
       </main>
     </SidebarProvider>
