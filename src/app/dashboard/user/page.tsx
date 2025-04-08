@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, columns } from "./_components/columns";
-import { DataTable } from "./_components/data-table";
-import api from "@/lib/axios";
-import { UserForm } from "./_components/from-user";
 import { Button } from "@/components/ui/button";
+import { TableData } from "@/components/table-data";
 import { TableSkeleton } from "@/components/table-skeleton";
+import { User, columns } from "./_components/columns";
+import { UserForm } from "./_components/from-user";
+import api from "@/lib/axios";
 
 const DashboardUserPage = () => {
   const [data, setData] = useState<User[]>([]);
@@ -50,7 +50,7 @@ const DashboardUserPage = () => {
         {loading ? (
           <TableSkeleton columns={6} rows={5} />
         ) : (
-          <DataTable columns={columns} data={data} />
+          <TableData columns={columns} data={data} />
         )}
       </div>
       {openEditDialog && (
