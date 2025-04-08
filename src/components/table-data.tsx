@@ -34,8 +34,8 @@ export function TableData<TData, TValue>({
   });
 
   return (
-    <div>
-      <div className="rounded-md border shadow-sm">
+    <section>
+      <div className="rounded-md border shadow-md">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -123,6 +123,6 @@ export function TableData<TData, TValue>({
           Next
         </Button>
       </div>
-    </div>
+    </section>
   );
 }
