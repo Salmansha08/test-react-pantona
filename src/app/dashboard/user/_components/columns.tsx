@@ -118,8 +118,8 @@ function PictureCell({
               src={fullImageUrl}
               alt={`${user.name}'s profile (large)`}
               className="max-h-[70vh] max-w-full rounded-md object-contain"
-              width={200}
-              height={200}
+              width={500}
+              height={500}
             />
           </div>
         </DialogContent>
