@@ -1,0 +1,29 @@
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { User } from "@/lib/axios";
+
+interface UserInfoProps {
+  user: User;
+  imageUrl: string | null;
+  showEmail?: boolean;
+}
+
+export function UserInfo({ user, imageUrl, showEmail = false }: UserInfoProps) {
+  return (
+    <>
+      <Avatar className="h-8 w-8 overflow-hidden rounded-full">
+        <AvatarImage src={imageUrl ?? undefined} alt={user.name} />
+        <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+          {user.name}
+        </AvatarFallback>
+      </Avatar>
+      <div className="grid flex-1 text-left text-sm leading-tight">
+        <span className="truncate font-medium">{user.name}</span>
+        {showEmail && (
+          <span className="text-muted-foreground truncate text-xs">
+            {user.email}
+          </span>
+        )}
+      </div>
+    </>
+  );
+}

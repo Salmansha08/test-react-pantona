@@ -13,6 +13,7 @@ import {
 import { User, HomeIcon, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { logout } from "@/lib/axios";
+import { UserProfileSidebar } from "./user-profile";
 
 const items = [
   {
@@ -51,6 +52,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        <UserProfileSidebar />
         <Button
           variant="ghost"
           className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20"
