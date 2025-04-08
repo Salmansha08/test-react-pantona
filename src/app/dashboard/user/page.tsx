@@ -33,8 +33,7 @@ const DashboardUserPage = () => {
   return (
     <main>
       <div>
-        <h1 className="text-2xl font-bold">User Dashboard</h1>
-        <p>Selamat datang di halaman dashboard user!</p>
+        <h1 className="text-2xl font-bold">User Management</h1>
       </div>
       <div className="flex justify-end">
         <Button
